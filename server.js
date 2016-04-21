@@ -10,6 +10,7 @@ var http = require('http');
 var url = require('url');
 var path = require('path');
 var util = require('util');
+var port = process.env.PORT || 8765;
 
 var dir = path.dirname(fs.realpathSync(__filename));
 var svgTemplate = [
@@ -58,6 +59,6 @@ http.createServer(function (req, res) {
   res.writeHead(404, {'Content-Type': 'text/plain'});
   res.write('404 Not Found\n');
   res.end();
-}).listen(8765, 'localhost');
+}).listen(port, 'localhost'); // 8765, 'localhost');
 
 console.log('mosaic server running on port 8765');
