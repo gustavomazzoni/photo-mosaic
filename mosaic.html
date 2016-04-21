@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mosaic</title>
+
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+  </head>
+  <body>
+
+  	<h1 align="center">Create a Photo Mosaic of your photo</h1>
+    	
+    <section id="drop-target">
+	    <div class="tool-ui-container">
+	    	<div class="tool-container-component">
+	    		<div class="omnibox accept-file-input start">
+	    			<!-- <div class="progress"></div> -->
+	    			<div class="omnibox-inner initial">
+	    				<div class="panel status-panel">
+	    					<div class="panel-inner">
+	    						<div class="current-state">
+	    							<p class="state state-start">Drop your photo here!
+	    								<span class="omnibox-choose">
+	    									<label for="file-input" class="omnibox-link">Choose file
+	    										<input id="file-input" type="file" name="button-file" accept="image/*">
+	    									</span>
+	    								</span>
+	    							</p>
+	    							<p class="state state-processing">Generating...</p>
+	    						</div>
+	    					</div>
+	    				</div>
+	    			</div>
+	    		</div>
+	    	</div>
+	    </div>
+	    <div class="result-message"></div>
+	</section>
+
+	<section class="results">
+		<h2 align="center">Results</h2>
+		<div id="canvas-results"></div>
+	</section>
+
+    <script type="text/javascript" src="js/mosaic.js"></script>
+    <script type="text/javascript" src="js/photo-mosaic.js"></script>
+    <script type="text/javascript" src="js/client.js"></script>
+  </body>
+</html>

@@ -1,0 +1,108 @@
+body {
+	font-family: Source Sans Pro,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+section {
+	max-width: 1140px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    min-height: 300px;
+}
+
+.omnibox.accept-file-input {
+    cursor: pointer;
+}
+.omnibox {
+    position: relative;
+    box-sizing: border-box;
+    width: 1140px;
+    height: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px;
+    text-align: center;
+    font-size: 24px;
+    color: #fff;
+    line-height: 36px;
+    border: 2px solid transparent;
+}
+.omnibox {
+    display: block;
+}
+.omnibox {
+    background-color: #69c773;
+}
+.omnibox .omnibox-inner {
+    box-sizing: border-box;
+    border-width: 2px;
+    border-style: dashed;
+    height: 256px;
+    width: auto;
+    font-weight: 400;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-flex-wrap: nowrap;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-align-content: stretch;
+    -ms-flex-line-pack: stretch;
+    align-content: stretch;
+    -webkit-align-items: stretch;
+    -ms-flex-align: stretch;
+    align-items: stretch;
+}
+.omnibox .omnibox-inner {
+    background-color: #69C262;
+    border-color: rgba(73,134,18,.3);
+}
+.omnibox .omnibox-choose {
+    display: block;
+    cursor: pointer;
+}
+.state-start {
+	display: none;
+}
+.omnibox .omnibox-inner.initial .state-start {
+	display: block;
+}
+.state-processing {
+	display: none;
+}
+.omnibox .omnibox-inner.processing .state-processing {
+	display: block;
+}
+.omnibox .omnibox-inner .panel {
+	margin: auto;
+}
+.omnibox .omnibox-link {
+    display: inline-block;
+    border-bottom: 2px solid hsla(0,0%,100%,.7);
+    line-height: 1.2;
+    cursor: pointer;
+}
+.omnibox .omnibox-file-input {
+	display: none;
+}
+
+#file-input {
+	display: none;
+}
+
+.results {
+	border: 2px solid #000;
+    margin-top: 50px;
+}
+
+canvas {
+	margin: 20px auto;
+	display: block;
+}
