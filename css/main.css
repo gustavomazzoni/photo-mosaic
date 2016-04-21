@@ -11,10 +11,7 @@ section {
     min-height: 300px;
 }
 
-.omnibox.accept-file-input {
-    cursor: pointer;
-}
-.omnibox {
+.box {
     position: relative;
     box-sizing: border-box;
     width: 1140px;
@@ -28,13 +25,13 @@ section {
     line-height: 36px;
     border: 2px solid transparent;
 }
-.omnibox {
+.box {
     display: block;
 }
-.omnibox {
+.box {
     background-color: #69c773;
 }
-.omnibox .omnibox-inner {
+.box .box-inner {
     box-sizing: border-box;
     border-width: 2px;
     border-style: dashed;
@@ -60,37 +57,34 @@ section {
     -ms-flex-align: stretch;
     align-items: stretch;
 }
-.omnibox .omnibox-inner {
+.box .box-inner {
     background-color: #69C262;
     border-color: rgba(73,134,18,.3);
 }
-.omnibox .omnibox-choose {
+.box .box-choose {
     display: block;
     cursor: pointer;
 }
 .state-start {
 	display: none;
 }
-.omnibox .omnibox-inner.initial .state-start {
+.box .box-inner.initial .state-start {
 	display: block;
 }
 .state-processing {
 	display: none;
 }
-.omnibox .omnibox-inner.processing .state-processing {
+.box .box-inner.processing .state-processing {
 	display: block;
 }
-.omnibox .omnibox-inner .panel {
+.box .box-inner .panel {
 	margin: auto;
 }
-.omnibox .omnibox-link {
+.box .box-link {
     display: inline-block;
     border-bottom: 2px solid hsla(0,0%,100%,.7);
     line-height: 1.2;
     cursor: pointer;
-}
-.omnibox .omnibox-file-input {
-	display: none;
 }
 
 #file-input {

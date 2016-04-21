@@ -17,7 +17,7 @@ var INITAL = "initial";
 var PROCESSING = "processing";
 var currentState = INITAL;
 function changeState(state) {
-	var innerBox = document.querySelector(".omnibox-inner");
+	var innerBox = document.querySelector(".box-inner");
 
 	innerBox.className = innerBox.className.replace(currentState, ' '+state);
 
