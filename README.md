@@ -14,7 +14,7 @@ The goal of this task is to implement the following flow in a client-side app.
     - tiles should be rendered a complete row at a time (a user should never
       see a row with some completed tiles and some incomplete)
     - the mosaic should be rendered from the top row to the bottom row.
-    
+
 4. The client app should make effective use of parallelism and asynchrony.
 
 
@@ -66,3 +66,5 @@ Start the server
 $ npm start
 ```
 
+### Demo
+http://photomosaic-mazzoni.herokuapp.com/
