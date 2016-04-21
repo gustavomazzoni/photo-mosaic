@@ -2,15 +2,19 @@
 ## Goal
 
 The goal of this task is to implement the following flow in a client-side app.
+
 1. A user selects a local image file.
+
 2. The app loads that image, divides the image into tiles, computes the average
    color of each tile, fetches a tile from the server for that color, and
    composites the results into a photomosaic of the original image.
+
 3. The composited photomosaic should be displayed according to the following
    constraints:
     - tiles should be rendered a complete row at a time (a user should never
       see a row with some completed tiles and some incomplete)
     - the mosaic should be rendered from the top row to the bottom row.
+    
 4. The client app should make effective use of parallelism and asynchrony.
 
 
@@ -46,6 +50,7 @@ mosaic client and the mosaic server.  The default size is 16x16.
 ## Solution
 
 It was created and exposed a module called PhotoMosaic to manage everything related to the generation of the photo mosaic. To get a better performance and optimization, it was used Promise and Worker (HTML5 features) to make havy and/or equal operations in parallel and asynchronous.
+
 The PhotoMosaic module, through the generate function, returns a promise so when every tile is processed and loaded it responds with a canvas with the photomosaic image ready to be displayed.
 
 ## Running the application
