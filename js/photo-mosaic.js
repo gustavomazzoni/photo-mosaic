@@ -1,4 +1,5 @@
 var PhotoMosaic = (function(document){
+	"use strict";
 
 	var fabric = {}
 
