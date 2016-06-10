@@ -29,26 +29,14 @@ serving the client app and the tile images. To start it, run npm start.
   
   /color/<hex>   serves an SVG mosaic tile for color <hex>.  e.g., /color/0e4daa
 
-The tile size should be configurable via the code constants in js/mosaic.js.
-The project skeleton is already set up to include those constants in both the
-mosaic client and the mosaic server.  The default size is 16x16.
+The tile size should be configurable via the code constants in js/mosaic.js. The default size is 16x16.
 
 ### Requirements:
- - Submit this as production-quality code for review; i.e.,
-   - write effective comments; 
-   - make the code modular;
-   - make the code testable;
- - Avoid using JS libraries (e.g., jQuery, Modernizr, React) as browser APIs
-   are sufficient for the exercise and we're not testing for familiarity with
-   any particular tools;
+ - Make the code modular;
+ - Make the code testable;
+ - Not use JS libraries (e.g., jQuery, Modernizr, React) as browser APIs
+   are sufficient for the project;
  - Use HTML5 features where appropriate;
- - Allocate about 3 hours to do the task.
-
-### Optional:
- - edit /etc/hosts;
- - use any HTML5 feature supported by current Chrome (e.g., Promise, Worker);
- - be as creative as you like with the submission UI (file input, drag & drop,
-   etc); however, it is not the focus of the task, a minimal UI is fine.
 
 ## Solution
 
