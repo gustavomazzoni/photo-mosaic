@@ -22,8 +22,11 @@ The goal of this task is to implement the following flow in a client-side app.
 
 The project skeleton contains a lightweight server (written in node) for
 serving the client app and the tile images. To start it, run npm start.
+
   /              serves mosaic.html
+  
   /js/*          serves static resources
+  
   /color/<hex>   serves an SVG mosaic tile for color <hex>.  e.g., /color/0e4daa
 
 The tile size should be configurable via the code constants in js/mosaic.js.
