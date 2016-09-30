@@ -1,13 +1,12 @@
-var PhotoMosaic = (function(document){
-	"use strict";
-
-	var fabric = {}
+var PhotoMosaic = (function(document) {
+	'use strict';
 
 	// limits of image size
-	var MAX_HEIGHT = 680;
-	var MAX_WIDTH = 680;
+	var MAX_HEIGHT = 680,
+		MAX_WIDTH = 680;
+
 	// Resize the image in case it's bigger than the limit size
-	function scaleSize(img){
+	function scaleSize(img) {
 		if (img.width < MAX_WIDTH && img.height < MAX_HEIGHT) return img;
 
 		if (img.width > MAX_WIDTH) {
@@ -18,29 +17,30 @@ var PhotoMosaic = (function(document){
 			img.width *= MAX_HEIGHT / img.height;
 			img.height = MAX_HEIGHT;
 		}
-		var canvas = document.createElement('canvas');
-		var ctx = canvas.getContext("2d");
+		var canvas = document.createElement('canvas'),
+			ctx = canvas.getContext('2d'),
+			resizedImage = new Image();
 		canvas.width = img.width;
 		canvas.height = img.height;
 		ctx.drawImage(img, 0, 0, img.width, img.height);
-		var resizedImage = new Image();
 		resizedImage.src = canvas.toDataURL();
 		return resizedImage;
 	}
 
-	fabric.generate = function (image) {
-		var start = performance.now(); //new Date().getTime();
+	function generate(image) {
+		var start = performance.now(); // for performance debugging
 
 		// Resize the image in case it's bigger than the limit size
 		image = scaleSize(image);
 		
-		// Create promise to return the result when to whole canvas is ready
+		// Create promise to return the result when the whole canvas is ready
 		var promise = new Promise(function(resolve, reject) {
-			var canvas = document.createElement('canvas');
+			var canvas = document.createElement('canvas'),
+				context;
 			canvas.width = image.width;
 			canvas.height = image.height;
-			var context = canvas.getContext("2d");
-
+			context = canvas.getContext('2d')
+			
 			// call function to composite the tiles results into a photomosaic of the original image
 			var photomosaic = new PhotoMosaic(image, TILE_WIDTH, TILE_HEIGHT);
 			photomosaic.build().then(function(result) {
@@ -50,8 +50,8 @@ var PhotoMosaic = (function(document){
 				};
 
 				resolve(canvas);
-				var end = performance.now(); //new Date().getTime();
-				console.log('Execution time (ms): '+(end - start).toFixed(4));
+				var end = performance.now();
+				console.log('Execution time (ms): ' + (end - start).toFixed(4));
 			}, function(err) {
 				reject(err);
 			});
@@ -60,14 +60,12 @@ var PhotoMosaic = (function(document){
 	}
 
 	function PhotoMosaic(image, width, height) {
-		var _originalImage = image;
-		var _tileWidth = width;
-		var _tileHeight = height;
-
-		var _worker = new Worker("js/worker.js");
-
-	    var _index = 0;
-		var _handlers = [];
+		var _originalImage = image,
+			_tileWidth = width,
+			_tileHeight = height,
+			_worker = new Worker('js/worker.js'),
+			_index = 0,
+			_handlers = [];
 
 		_worker.onmessage = function(e) {
 			var handler = _handlers[e.data.index];
@@ -88,17 +86,19 @@ var PhotoMosaic = (function(document){
 			var promise = new Promise(function(resolve, reject) {
 		  		var count = 0;
 				for (var i = 0, l = slicedImageList.length; i < l; i++) {
-					var tile = slicedImageList[i];
-					var tileImage = new Image();
+					var tile = slicedImageList[i],
+						tileImage = new Image(),
+						imageData;
+
 					tileImage.src = tile.src;
-					var imageData = getImageData(tileImage);
+					imageData = getImageData(tileImage);
 
 					getAverageColor(imageData, i).then(function(result) {
 						// Set the source image to the one fetched from the server for the color
-						var sourceTile = "color/"+result.colorHex.substring(1);
+						var sourceTile = 'color/' + result.colorHex.substring(1),
+							// create an image object and set the url source to preload the image
+							tempImg = new Image();
 
-						// create an image object and set the url source to preload the image
-						var tempImg = new Image();
 						tempImg.src = sourceTile;
 
 						tempImg.onload = function(e) {
@@ -118,19 +118,18 @@ var PhotoMosaic = (function(document){
 				};
 			});
 			return promise;
-		}
+		};
 
 		// divides the image into tiles
 		function sliceImageIntoTiles() {
-			var canvas = document.createElement('canvas');
-			var dx = canvas.width = _tileWidth;
-			var dy = canvas.height = _tileHeight;
-			var ctx = canvas.getContext("2d");
+			var canvas = document.createElement('canvas'),
+				dx = canvas.width = _tileWidth,
+				dy = canvas.height = _tileHeight,
+				ctx = canvas.getContext('2d'),
+				cols = _originalImage.width / _tileWidth,
+				rows = _originalImage.height / _tileHeight,
+				slicedImageList = [];
 
-			var cols = _originalImage.width / _tileWidth;
-			var rows = _originalImage.height / _tileHeight;
-
-			var slicedImageList = [];
 			for (var row = 0; row < rows; row++) {
 				for (var col = 0; col < cols; col++) {
 					// Take snapshot of a part of the source image. The tile.
@@ -152,14 +151,13 @@ var PhotoMosaic = (function(document){
 
 		// Get imageData from image object
 		function getImageData(image){
-			var c = document.createElement('canvas');
-			var height = c.height = image.naturalHeight || image.offsetHeight || image.height;
-		    var width = c.width = image.naturalWidth || image.offsetWidth || image.width;
+			var c = document.createElement('canvas'),
+				height = c.height = image.naturalHeight || image.offsetHeight || image.height,
+				width = c.width = image.naturalWidth || image.offsetWidth || image.width,
+				ctx = c.getContext('2d'),
+				data;
 
-		    var ctx = c.getContext('2d');
 			ctx.drawImage(image, 0, 0);
-
-		    var data;
 		    try {
 		        data = ctx.getImageData(0, 0, width, height);
 		    } catch(e) {
@@ -189,8 +187,10 @@ var PhotoMosaic = (function(document){
 		}
 	}
 
-	return fabric;
-})(document)
+	return {
+		generate: generate
+	};
+})(document);
 
 
 var exports = exports || null;

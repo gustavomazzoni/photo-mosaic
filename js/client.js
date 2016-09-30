@@ -1,9 +1,13 @@
 (function(document){
-	"use strict";
+	'use strict';
+
+	var INITAL = 'initial',
+		PROCESSING = 'processing',
+		currentState = INITAL;
 
 	function render(src){
 		var image = new Image();
-		image.onload = function(e){
+		image.onload = function(e) {
 			changeState(PROCESSING);
 			// generates the photo mosaic from original image
 			PhotoMosaic.generate(e.target).then(function(result) {
@@ -15,45 +19,54 @@
 		image.src = src;
 	}
 
-	var INITAL = "initial";
-	var PROCESSING = "processing";
-	var currentState = INITAL;
 	function changeState(state) {
-		var innerBox = document.querySelector(".box-inner");
+		var innerBox = document.querySelector('.box-inner');
 
-		innerBox.className = innerBox.className.replace(currentState, ' '+state);
+		innerBox.className = innerBox.className.replace(currentState, ' ' + state);
 
 		currentState = state;
 	}
 
-	function loadImage(src){
+	function loadImage(src, callback){
+		//	Create FileReader
+		var reader = new FileReader();
+
 		//	Prevent any non-image file type from being read.
 		if(!src.type.match(/image.*/)){
 			console.log("The dropped file is not an image: ", src.type);
 			return;
 		}
 
-		//	Create our FileReader and run the results through the render function.
-		var reader = new FileReader();
-		reader.onload = function(e){
-			render(e.target.result);
+		// Run callback function with the results on load
+		reader.onload = function(e) {
+			callback(e.target.result);
 		};
 		reader.readAsDataURL(src);
 	}
 
-	var dropTarget = document.getElementById("drop-target");
-	dropTarget.addEventListener("dragover", function(e) {
-		e.preventDefault();
-	}, true);
-	dropTarget.addEventListener("drop", function(e) {
-		e.preventDefault();
-		loadImage(e.dataTransfer.files[0]);
-	}, true);
+	document.onreadystatechange = function() {
+		if (document.readyState === 'complete') {
+			// document ready
+			var dropTarget = document.getElementById("drop-target"),
+				fileInput = document.getElementById("file-input");
 
-	var fileInput = document.getElementById("file-input");
-	fileInput.onchange = function(e) {
-		e.preventDefault();
-		loadImage(e.target.files[0]);
+			// add Drag & Drop actions
+			dropTarget.addEventListener("dragover", function(e) {
+				e.preventDefault();
+			}, true);
+			dropTarget.addEventListener("drop", function(e) {
+				e.preventDefault();
+				// Load image from src then Run the results through the render function.
+				loadImage(e.dataTransfer.files[0], render);
+			}, true);
+
+			// add File input action
+			fileInput.addEventListener("change", function(e) {
+				e.preventDefault();
+				// Load image from src then Run the results through the render function.
+				loadImage(e.target.files[0], render);
+			});
+		}
 	};
 
 })(document);
