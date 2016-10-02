@@ -1,0 +1,9 @@
+.DS_Store
+*.log
+*.pid
+*.gz
+
+logs
+
+node_modules
+npm-debug.log
