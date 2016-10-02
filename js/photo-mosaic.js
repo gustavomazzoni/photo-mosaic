@@ -63,11 +63,23 @@ var PhotoMosaic = (function(document) {
 		var _originalImage = image,
 			_tileWidth = width,
 			_tileHeight = height,
-			_worker = new Worker('js/worker.js'),
+			_workersPool = [],
+			_workersCount = 4,
 			_index = 0,
 			_handlers = [];
 
-		_worker.onmessage = function(e) {
+
+		function launchWorkers() {
+			// Launching every worker
+		    for (var i = 0; i < _workersCount; i++) {
+		        var worker = new Worker("js/worker.js");
+		        worker.onmessage = onWorkerMessage;
+		        // add to pool
+		        _workersPool.push(worker);
+		    }
+		}
+
+		function onWorkerMessage(e) {
 			var handler = _handlers[e.data.index];
 			if (e.data.err){
 				handler.reject(e.data.err);
@@ -76,24 +88,35 @@ var PhotoMosaic = (function(document) {
 			}
 		}
 
+		function getWorker() {
+			var index = 0;
+			function getWorkerFromPool() {
+				var worker = _workersPool[index];
+				if (index === _workersCount - 1) {
+					index = 0;
+				} else {
+					index++;
+				}
+				return worker;
+			}
+			// return closure function
+			return getWorkerFromPool();
+		}
+
 		// computes the average color of each tile,
 		// fetches a tile from the server for that color, and
 		// composites the results into a photomosaic of the original image.
 		this.build = function() {
+			// load workers in advance
+			launchWorkers();
+
 			// divides the image into tiles
 			var slicedImageList = sliceImageIntoTiles();
 
 			var promise = new Promise(function(resolve, reject) {
 		  		var count = 0;
 				for (var i = 0, l = slicedImageList.length; i < l; i++) {
-					var tile = slicedImageList[i],
-						tileImage = new Image(),
-						imageData;
-
-					tileImage.src = tile.src;
-					imageData = getImageData(tileImage);
-
-					getAverageColor(imageData, i).then(function(result) {
+					getAverageColor(slicedImageList[i].data, i).then(function(result) {
 						// Set the source image to the one fetched from the server for the color
 						var sourceTile = 'color/' + result.colorHex.substring(1),
 							// create an image object and set the url source to preload the image
@@ -108,6 +131,7 @@ var PhotoMosaic = (function(document) {
 							
 							count++;
 
+							// when every image is loaded, resolve
 							if (count === l) {
 								resolve(slicedImageList);
 							}
@@ -136,7 +160,7 @@ var PhotoMosaic = (function(document) {
 					ctx.drawImage(_originalImage, dx*col, dy*row, dx, dy, 0, 0, dx, dy);
 
 					var tile = {
-						src: canvas.toDataURL(),
+						data: ctx.getImageData(0, 0, dx, dy),
 						width: dx,
 						height: dy,
 						x: dx * col,
@@ -147,23 +171,6 @@ var PhotoMosaic = (function(document) {
 				}
 			}
 			return slicedImageList;
-		}
-
-		// Get imageData from image object
-		function getImageData(image){
-			var c = document.createElement('canvas'),
-				height = c.height = image.naturalHeight || image.offsetHeight || image.height,
-				width = c.width = image.naturalWidth || image.offsetWidth || image.width,
-				ctx = c.getContext('2d'),
-				data;
-
-			ctx.drawImage(image, 0, 0);
-		    try {
-		        data = ctx.getImageData(0, 0, width, height);
-		    } catch(e) {
-		        console.log('Error getting image data.');
-		    }
-			return data;
 		}
 
 		// computes the average color of each tile
@@ -178,9 +185,10 @@ var PhotoMosaic = (function(document) {
 					resolve: resolve,
 					reject: reject
 				}
-				// The index property is to find the right handler
-				// The tileIndex is to find the right tile
-				_worker.postMessage({index: _index, imageData: imageData, tileIndex: index});
+				// start backgroud process via worker.
+				// The index property is to find the right handler on return
+				// The tileIndex is to find the right tile on return
+				getWorker().postMessage({index: _index, imageData: imageData, tileIndex: index});
 			});
 
 			return promise;
