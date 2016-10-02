@@ -65,17 +65,20 @@ section {
     display: block;
     cursor: pointer;
 }
-.state-start {
+.state {
 	display: none;
 }
 .box .box-inner.initial .state-start {
 	display: block;
 }
-.state-processing {
-	display: none;
+.box .box-inner.loading .state-loading {
+    display: block;
 }
 .box .box-inner.processing .state-processing {
 	display: block;
+}
+.box .box-inner.error .state-error {
+    display: block;
 }
 .box .box-inner .panel {
 	margin: auto;

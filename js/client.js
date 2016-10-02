@@ -1,11 +1,13 @@
-(function(document){
+(function(document) {
 	'use strict';
 
 	var INITAL = 'initial',
+		LOADING = 'loading',
 		PROCESSING = 'processing',
+		ERROR = 'error',
 		currentState = INITAL;
 
-	function render(src){
+	function render(src) {
 		var image = new Image();
 		image.onload = function(e) {
 			changeState(PROCESSING);
@@ -27,13 +29,17 @@
 		currentState = state;
 	}
 
-	function loadImage(src, callback){
+	function loadImage(src, callback) {
+		if (currentState !== INITAL) return;
+
+		changeState(LOADING);
+
 		//	Create FileReader
 		var reader = new FileReader();
 
 		//	Prevent any non-image file type from being read.
 		if(!src.type.match(/image.*/)){
-			console.log("The dropped file is not an image: ", src.type);
+			console.log('The dropped file is not an image: ', src.type);
 			return;
 		}
 
@@ -44,24 +50,35 @@
 		reader.readAsDataURL(src);
 	}
 
+	function isCanvasSupported() {
+		var elem = document.createElement('canvas');
+		return !!(elem.getContext && elem.getContext('2d'));
+	}
+
 	document.onreadystatechange = function() {
 		if (document.readyState === 'complete') {
 			// document ready
-			var dropTarget = document.getElementById("drop-target"),
-				fileInput = document.getElementById("file-input");
+			// check if Canvas is supported
+			if (!isCanvasSupported()) {
+	            changeState(ERROR);
+	            return;
+	        }
+
+			var dropTarget = document.getElementById('drop-target'),
+				fileInput = document.getElementById('file-input');
 
 			// add Drag & Drop actions
-			dropTarget.addEventListener("dragover", function(e) {
+			dropTarget.addEventListener('dragover', function(e) {
 				e.preventDefault();
 			}, true);
-			dropTarget.addEventListener("drop", function(e) {
+			dropTarget.addEventListener('drop', function(e) {
 				e.preventDefault();
 				// Load image from src then Run the results through the render function.
 				loadImage(e.dataTransfer.files[0], render);
 			}, true);
 
 			// add File input action
-			fileInput.addEventListener("change", function(e) {
+			fileInput.addEventListener('change', function(e) {
 				e.preventDefault();
 				// Load image from src then Run the results through the render function.
 				loadImage(e.target.files[0], render);
