@@ -110,67 +110,64 @@ var PhotoMosaic = (function(document) {
 			// load workers in advance
 			launchWorkers();
 
-			// divides the image into tiles
-			var slicedImageList = sliceImageIntoTiles();
-
-			var promise = new Promise(function(resolve, reject) {
-		  		var count = 0;
-				for (var i = 0, l = slicedImageList.length; i < l; i++) {
-					getAverageColor(slicedImageList[i].data, i).then(function(result) {
-						// Set the source image to the one fetched from the server for the color
-						var sourceTile = 'color/' + result.colorHex.substring(1),
-							// create an image object and set the url source to preload the image
-							tempImg = new Image();
-
-						tempImg.src = sourceTile;
-
-						tempImg.onload = function(e) {
-							var tile = slicedImageList[result.index];
-							tile.src = e.target.src;
-							tile.image = e.target;
-							
-							count++;
-
-							// when every image is loaded, resolve
-							if (count === l) {
-								resolve(slicedImageList);
-							}
-						};
-					}, function(err) {
-						reject(err);
-					});
-				};
-			});
-			return promise;
-		};
-
-		// divides the image into tiles
-		function sliceImageIntoTiles() {
+			// divide the image into tiles
 			var canvas = document.createElement('canvas'),
 				dx = canvas.width = _tileWidth,
 				dy = canvas.height = _tileHeight,
 				ctx = canvas.getContext('2d'),
 				cols = _originalImage.width / _tileWidth,
 				rows = _originalImage.height / _tileHeight,
-				slicedImageList = [];
+				slicedImageList = [],
+				total = Math.ceil(rows) * Math.ceil(cols),
+				count = 0;
 
-			for (var row = 0; row < rows; row++) {
-				for (var col = 0; col < cols; col++) {
-					// Take snapshot of a part of the source image. The tile.
-					ctx.drawImage(_originalImage, dx*col, dy*row, dx, dy, 0, 0, dx, dy);
+			var promise = new Promise(function(resolve, reject) {
+				for (var row = 0; row < rows; row++) {
+					for (var col = 0; col < cols; col++) {
+						// Take snapshot of a part of the source image. The tile.
+						// to divide the image into tiles
+						ctx.drawImage(_originalImage, dx*col, dy*row, dx, dy, 0, 0, dx, dy);
 
-					var tile = {
-						data: ctx.getImageData(0, 0, dx, dy),
-						width: dx,
-						height: dy,
-						x: dx * col,
-						y: dy * row,
-					};
-					
-					slicedImageList.push(tile);
+						// create the tile with the slice
+						var tile = {
+							data: ctx.getImageData(0, 0, dx, dy),
+							width: dx,
+							height: dy,
+							x: dx * col,
+							y: dy * row,
+						};
+
+						slicedImageList.push(tile);
+
+						// compute its average color
+						getAverageColor(tile.data, count).then(function(result) {
+							// Set the source image to the one fetched from the server for the color
+							var sourceTile = 'color/' + result.colorHex.substring(1),
+								// create an image object and set the url source to preload the image
+								tempImg = new Image();
+
+							tempImg.onload = function(e) {
+								slicedImageList[result.index].src = e.target.src;
+								slicedImageList[result.index].image = e.target;
+								
+								total--;
+
+								// when every image is loaded, resolve
+								if (total === 0) {
+									resolve(slicedImageList);
+								}
+							};
+
+							tempImg.src = sourceTile;
+						}, function(err) {
+							reject(err);
+						});
+
+						count++;
+					}
 				}
-			}
-			return slicedImageList;
+			});
+			return promise;
 		}
 
 		// computes the average color of each tile
