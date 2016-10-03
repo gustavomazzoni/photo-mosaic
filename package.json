@@ -6,6 +6,5 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "throng": "4.0.0"
   }
 }

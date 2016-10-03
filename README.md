@@ -54,6 +54,8 @@ Start the server
 ```sh
 $ npm start
 ```
+Then, open on your browser: http://localhost:8765/
+
 
 ### Demo
 This demo has a bad performance due to heroku limitation on concurrent web requests, since I'm using its standard free container. So it takes to long to download the SVG mosaic tiles.
