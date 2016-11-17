@@ -1,4 +1,6 @@
 # Photo Mosaic App
+A pure JavaScript client-side app that loads an image and generates a photo-mosaic of the original image, making effective use of parallel and asynchronous functions through HTML5 features like Web Workers and Promises.
+
 ## Goal
 
 The goal of this task is to implement the following flow in a client-side app.
