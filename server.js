@@ -33,7 +33,7 @@ http.createServer(function (req, res) {
     var filename = dir + pathname;
     var stats = fs.existsSync(filename) && fs.statSync(filename);
     if (stats && stats.isFile()) {
-      res.writeHead(200, {'Content-Type' : 'text/css'});
+      res.writeHead(200, {'Content-Type': m[1] == 'css' ? 'text/css' : 'application/javascript'});
       fs.createReadStream(filename).pipe(res);
       return;
     }
